@@ -64,6 +64,10 @@ NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
   #define XTIME_AS_A_MACRO 0
 #endif
 
+#ifndef BLOCKCOPY_AS_A_FUNCTION
+  #define BLOCKCOPY_AS_A_FUNCTION 0
+#endif
+
 /*****************************************************************************/
 /* Private variables:                                                        */
 /*****************************************************************************/
@@ -444,6 +448,7 @@ static void InvCipher(void)
   AddRoundKey(0);
 }
 
+#if BLOCKCOPY_AS_A_FUNCTION
 static void BlockCopy(uint8_t* output, const uint8_t* input)
 {
   uint8_t i;
@@ -452,8 +457,9 @@ static void BlockCopy(uint8_t* output, const uint8_t* input)
     output[i] = input[i];
   }
 }
-
-
+#else
+    #define BlockCopy(output,input) memcpy(output,input,KEYLEN)
+#endif // #if BLOCKCOPY_AS_A_FUNCTION
 
 /*****************************************************************************/
 /* Public functions:                                                         */
